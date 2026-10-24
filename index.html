@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact Gain: Offline Checkpoint Selection for Video-Action Models</title>
+  <meta name="description" content="Contact Gain ranks frozen video-model checkpoints by how much their activations improve prediction of future robot–object contact, selecting strong Video-Action Model checkpoints without training an action decoder for each one.">
+  <meta property="og:title" content="Do Better Videos Mean Better Robot Control? Offline Checkpoint Selection for Video-Action Models">
+  <meta property="og:description" content="Contact Gain: an offline score that tracks downstream robot success across dense checkpoint sweeps of Cosmos and Wan on MolmoSpaces and RoboCasa.">
+  <meta property="og:url" content="https://jessieeenotli.github.io/contact-gain/">
+  <meta property="og:image" content="https://jessieeenotli.github.io/contact-gain/assets/img/og-card.png">
+  <meta name="twitter:image" content="https://jessieeenotli.github.io/contact-gain/assets/img/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2317242c'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23fcfcfb'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="venue">Preprint · 2026</p>
+    <h1>Do Better Videos Mean Better Robot Control?
+      <span class="sub">Offline Checkpoint Selection for Video-Action Models</span></h1>
+    <!-- TODO: replace with author names, links and affiliations before publishing -->
+    <p class="authors">Anonymous Authors</p>
+    <p class="affil">Affiliations to be added</p>
+
+    <nav class="links" aria-label="Paper resources">
+      <a class="btn" href="#video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        Video</a>
+      <!-- TODO: swap each "soon" span for a link once public, e.g. <a class="btn" href="https://arxiv.org/abs/XXXX.XXXXX">arXiv</a> -->
+      <span class="btn soon" aria-disabled="true">arXiv <small>soon</small></span>
+      <span class="btn soon" aria-disabled="true">Code <small>soon</small></span>
+      <span class="btn soon" aria-disabled="true">Checkpoints <small>soon</small></span>
+    </nav>
+
+    <div class="tldr">
+      <b>TL;DR</b> — Picking which video-model checkpoint to build a robot policy on normally means training and
+      evaluating an action decoder for every candidate. <b>Contact Gain</b> scores frozen checkpoints offline by how much their
+      activations improve prediction of future robot–object contact. Across four checkpoint sweeps (Cosmos and Wan on MolmoSpaces and
+      RoboCasa), its top-ranked checkpoint is a highest-success policy every time, while FVD and validation loss never pick the best one.
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="video">
+    <div class="wrap">
+      <figure class="video">
+        <video controls preload="metadata" playsinline poster="assets/video/poster.jpg" width="1920" height="1080"
+               aria-describedby="video-cap">
+          <source src="assets/video/contact_gain_overview.mp4" type="video/mp4">
+          Your browser can't play this video. <a href="assets/video/contact_gain_overview.mp4">Download it (MP4, 19 MB)</a>.
+        </video>
+        <figcaption id="video-cap"><b>Video overview</b> (2:55, with sound). Press play to watch.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="overview">
+    <div class="wrap">
+      <figure class="wide">
+        <a class="zoom" href="assets/img/teaser.png" aria-label="Open the overview figure at full size"><picture>
+          <source srcset="assets/img/teaser.webp" type="image/webp">
+          <img src="assets/img/teaser.png" width="2200" height="792" fetchpriority="high"
+             alt="Left: five video-model checkpoints (3k to 15k fine-tuning steps) generate similar-looking predictions for 'pick up the mug' but reach different, illustrative policy success rates from 10% to 40%. Right, top: previous methods train an action decoder and evaluate a policy for every checkpoint. Right, bottom: Contact Gain ranks the checkpoints first, so only the selected checkpoint's action decoder is trained and evaluated."></picture></a>
+        <figcaption><b>Offline checkpoint selection for Video-Action Models.</b> Similar-looking video predictions can correspond to
+          substantially different policy success (left). Exhaustive selection trains and evaluates an action decoder for every checkpoint
+          (top right). Contact Gain ranks frozen checkpoints first, so only the selected checkpoint's decoder is trained (bottom right). Success rates and the selected checkpoint in this overview are illustrative.
+          <span class="hint">Scroll sideways or tap the figure to open it at full size.</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="abstract">
+    <div class="wrap"><div class="narrow">
+      <h2>Abstract</h2>
+      <p>Recent Video-Action Models (VAMs) build robot policies on top of pretrained generative video backbones, using their internal
+        representations as predictive features for action decoding. However, selecting which video model checkpoint to use remains expensive:
+        each candidate typically requires training a separate Inverse Dynamics Model (IDM) and evaluating the resulting policy, while visual
+        fidelity alone provides little indication of downstream control quality. We contend that the usefulness of a video model for control
+        is determined not by how realistic its predictions appear, but by what interaction-relevant information its internal representations
+        make accessible to the action decoder. We therefore introduce Contact Gain, an offline metric that measures how much a video model’s
+        internal activations improve prediction of future robot–object contact beyond what can already be inferred from the observed history.
+        Across dense checkpoint sweeps of two generative video models on two simulated manipulation benchmarks, MolmoSpaces and RoboCasa, we
+        demonstrate that Contact Gain consistently tracks downstream robot success and selects a highest-performing checkpoint in each sweep,
+        while conventional video-quality metrics fail to reliably identify the best checkpoints. We further show that this interaction
+        information is not merely decodable: perturbing contact-associated activations produces substantially larger changes in predicted
+        actions than matched random perturbations.</p>
+    </div></div>
+  </section>
+
+  <section id="method">
+    <div class="wrap">
+      <div class="narrow">
+        <h2>Contact Gain</h2>
+        <p>We hypothesize that a video representation is useful for control when it makes the consequences of physical interaction
+          readily accessible to the action decoder. Contact Gain tests this hypothesis. Two ridge probes predict future contact (gripper and fingers with the target object, and
+          the object with its goal receptacle) 10, 20 and 40 frames ahead. Both see the same observed inputs: the observed camera frames,
+          robot-state history and the instruction. Only the second also receives frozen activations from the candidate video-model checkpoint.</p>
+        <math display="block" class="eq" aria-label="Contact Gain of checkpoint V c equals the error of the observed-input probe minus the error of the probe that also sees the video activations">
+          <mrow><mi mathvariant="normal">CG</mi><mo stretchy="false">(</mo><msub><mi>V</mi><mi>c</mi></msub><mo stretchy="false">)</mo><mo>=</mo>
+          <mi>ℰ</mi><mo stretchy="false">(</mo><mi>y</mi><mo>,</mo><msup><mi>𝑦̂</mi><mtext>obs</mtext></msup><mo stretchy="false">)</mo>
+          <mo>−</mo>
+          <mi>ℰ</mi><mo stretchy="false">(</mo><mi>y</mi><mo>,</mo><msup><mi>𝑦̂</mi><mi>c</mi></msup><mo stretchy="false">)</mo></mrow></math>
+        <p>Here <math><mi>ℰ</mi></math> is a variance-normalized squared error on held-out scoring data. A positive score means the checkpoint's activations
+          carry information about future interaction beyond what the observed history already provides. Scoring a checkpoint needs only
+          frozen forward passes on a few hundred to a thousand offline windows (320 on MolmoSpaces, 1,000 on RoboCasa) and two ridge
+          probes, with no action-decoder training and no policy rollouts.</p>
+      </div>
+      <figure class="wide">
+        <a class="zoom" href="assets/img/method.png" aria-label="Open the Contact Gain diagram at full size"><picture>
+          <source srcset="assets/img/method.webp" type="image/webp">
+          <img src="assets/img/method.png" width="2200" height="895" loading="lazy"
+             alt="Diagram of Contact Gain. Observed inputs (five camera frames, robot-state history, instruction) feed an observed-input probe and, together with frozen video-model activations, a second probe. Both predict gripper–target contact recorded 20 frames later. Contact Gain is the error of the first probe minus the error of the second."></picture></a>
+        <figcaption><b>Computing Contact Gain.</b> Future frames are used only as labels; no future image enters either probe. The scores
+          aggregate four contact relations (gripper, left finger, right finger, and target–receptacle) at three horizons.
+          <span class="hint">Scroll sideways or tap the figure to open it at full size.</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="wrap">
+      <h2>Contact Gain tracks downstream robot success</h2>
+      <p class="narrow">We fine-tune <b>Cosmos Predict-2.5-2B</b> and <b>Wan-2.2-TI2V-5B</b> on two simulated manipulation benchmarks.
+        On <b>MolmoSpaces</b> (250 trajectories, five object categories) we keep ten checkpoints per model (3K–30K updates); on
+        <b>RoboCasa</b> (500 episodes over five kitchen pick-and-place tasks) we keep 14 (3K–42K). For every checkpoint we train a separate
+        action decoder following mimic-video and measure task success in simulation (125–250 rollouts per checkpoint), then ask which offline
+        score would have picked the best checkpoint.</p>
+
+      <div class="stats" role="list">
+        <div class="stat" role="listitem"><div class="value">4 of 4</div>
+          <div class="label">sweeps where Contact Gain's top-ranked checkpoint is a highest-success policy</div></div>
+        <div class="stat" role="listitem"><div class="value">0.79–0.91</div>
+          <div class="label">Spearman ρ between Contact Gain and robot success across the four sweeps</div></div>
+        <div class="stat" role="listitem"><div class="value">&gt;90%</div>
+          <div class="label">of action-decoder training compute avoided by training only the selected checkpoint's decoder (MolmoSpaces)</div></div>
+      </div>
+
+      <h3 id="explorer-title">Explore the checkpoint sweeps</h3>
+      <p class="narrow small muted">Each point is one fine-tuned checkpoint. Choose the score used for selection: the ringed point is the
+        checkpoint that score picks, and the horizontal line marks the best observed success. The x-axis is oriented so the preferred
+        direction is always to the right (lower FVD and losses are preferred). Axes are scaled per panel. Each panel's ρ is the
+        paper's value from unrounded scores; MolmoSpaces points use the rounded values printed in the paper, so a few of them tie.</p>
+
+      <div class="controls">
+        <span class="ctl-label" id="score-label">Selection score</span>
+        <div class="seg" role="radiogroup" aria-labelledby="score-label" id="score-seg"></div>
+      </div>
+      <p class="sr-only" aria-live="polite" id="score-status"></p>
+      <div class="panels" id="panels" aria-describedby="explorer-title"></div>
+      <details class="table-view">
+        <summary>Show per-checkpoint values as a table</summary>
+        <div class="tablewrap" id="explorer-table"></div>
+      </details>
+      <p class="narrow caveat">Contact Gain's top-ranked checkpoint is a highest-success policy in all four sweeps, and FVD and validation
+        loss never pick the best one. Two caveats on RoboCasa: success largely increases with fine-tuning, so simply taking the latest
+        checkpoint (42K) would also pick the best checkpoint in both sweeps; and the pick depends on the action-decoder protocol. With
+        final-iteration decoders for Cosmos, Contact Gain's selection (42K, 26.4%) is 2.0 points below the best checkpoint (33K, 28.4%).
+        Training loss (ρ = 0.968) and LogME (0.913) correlate marginally better than Contact Gain (0.911) on RoboCasa Cosmos.</p>
+
+    </div>
+  </section>
+
+  <section id="mechanism">
+    <div class="wrap">
+      <h2>Contact-associated activations influence predicted actions</h2>
+      <p class="narrow">A probe can read contact from activations the decoder ignores, so we test whether the fixed decoder responds to them.
+        On the MolmoSpaces 21K Cosmos policy, we remove a single contact-predictive direction from the frozen activations, a direction found
+        from contact labels alone with no action gradients or success, and compare against random removals of the same size.</p>
+      <figure class="fig-mid">
+        <a class="zoom" href="assets/img/interventions.png" aria-label="Open the intervention figure at full size"><img src="assets/img/interventions.png" width="2016" height="561" loading="lazy"
+             alt="Three bar charts. (a) Removing the contact direction produces 4.72 times the energy-normalized squared action change of a same-size random removal. (b) Eight sensitive directions capture 58.7% of held-out action-gradient energy versus 0.41% for random 8-dimensional subspaces. (c) Readouts from the sensitive subspace predict future gripper motion with normalized error 0.873 versus 1.021 for random."></a>
+        <figcaption><b>(a)</b> Removing the contact direction produces 4.72× the squared action change per unit of perturbation energy of
+          size-matched random removal, and a larger change in 37 of 40 environments. <b>(b)</b> Eight of 2,048 channel directions capture 58.7% of held-out
+          action-gradient energy, versus 0.41% for random subspaces. <b>(c)</b> Those action-sensitive directions predict future gripper motion
+          with 14.5% lower error than random (0.873 vs. 1.021). The contact direction in (a) is distinct from the action-sensitive directions in (b–c);
+          contact readouts from those directions remain inconclusive after three-target correction. These are offline comparisons of
+          predicted actions; modified actions are not executed in the simulator.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="limitations">
+    <div class="wrap"><div class="narrow">
+      <h2>Limitations</h2>
+      <ul>
+        <li>Contact Gain is supervised: it depends on the representation layer, feature processing, probe family and labelled
+          trajectories, and its absolute values are not comparable across model families. It is a within-model checkpoint score.</li>
+        <li>The interventions are on one MolmoSpaces Cosmos checkpoint and establish effects on predicted actions, not on closed-loop success.</li>
+        <li>On RoboCasa, success largely increases with fine-tuning, so the latest checkpoint is a strong baseline there, and which
+          checkpoint is best depends on which action-decoder iteration is evaluated.</li>
+      </ul>
+    </div></div>
+  </section>
+
+  <section id="citation">
+    <div class="wrap"><div class="narrow">
+      <h2>Citation</h2>
+      <!-- TODO: replace with the arXiv BibTeX entry once available -->
+      <div class="bibwrap">
+      <button class="copy" type="button" id="copy-bib">Copy</button>
+      <pre class="bib" id="bib">@article{contactgain2026,
+  title   = {Do Better Videos Mean Better Robot Control?
+             Offline Checkpoint Selection for Video-Action Models},
+  author  = {Anonymous Authors},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</pre>
+      </div>
+    </div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">All results on this page are from the paper; the overview figure's success rates are illustrative.</div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
