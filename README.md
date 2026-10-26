@@ -2,7 +2,7 @@
 
 Project page for **"Do Better Videos Mean Better Robot Control? Offline Checkpoint Selection for Video-Action Models"**.
 
-Live at: https://jessieeenotli.github.io/contact-gain/
+Live at: https://contact-gain.github.io/
 
 The site is plain static HTML/CSS/JS (no build step). Every push to `main` redeploys it via GitHub Pages within a minute or two.
 
