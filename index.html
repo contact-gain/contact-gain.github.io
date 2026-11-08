@@ -27,6 +27,7 @@
       <a class="btn" href="#video">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         Video</a>
+      <a class="btn" href="#rollouts">Robot rollouts</a>
       <!-- TODO: swap each "soon" span for a link once public, e.g. <a class="btn" href="https://arxiv.org/abs/XXXX.XXXXX">arXiv</a> -->
       <span class="btn soon" aria-disabled="true">arXiv <small>soon</small></span>
       <span class="btn soon" aria-disabled="true">Code <small>soon</small></span>
@@ -53,6 +54,58 @@
         </video>
         <figcaption id="video-cap"><b>Video overview</b> (2:55, with sound). Press play to watch.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <section id="rollouts" aria-labelledby="rollouts-title">
+    <div class="wrap">
+      <h2 id="rollouts-title">Similar predictions, different robot behavior</h2>
+      <p class="narrow">Two checkpoints of <b>Cosmos Predict-2.5-2B</b> on MolmoSpaces, with the instruction
+        <b>“pick up the mug.”</b> Compare generated video predictions from the same recorded history,
+        then watch the policies act in the same saved episode.</p>
+      <div class="rollout-actions">
+        <button class="btn" type="button" id="replay-rollouts">Play all from start</button>
+        <button class="btn rollout-pause" type="button" id="pause-rollouts">Pause all</button>
+        <span class="small muted">Silent clips. Policy rollouts play at 4× speed.</span>
+      </div>
+      <p class="sr-only" aria-live="polite" id="rollout-status"></p>
+      <div class="rollout-grid">
+        <figure class="rollout-clip">
+          <h3>Generated video prediction · 21K checkpoint</h3>
+          <video controls muted playsinline preload="metadata" poster="assets/video/rollouts/cosmos21k_forecast.png" aria-labelledby="cosmos21k_forecast-cap">
+            <source src="assets/video/rollouts/cosmos21k_forecast.mp4" type="video/mp4">
+            <a href="assets/video/rollouts/cosmos21k_forecast.mp4">Download the 21K generated video prediction (MP4)</a>.
+          </video>
+          <figcaption id="cosmos21k_forecast-cap">Generated from the same observed history.</figcaption>
+        </figure>
+        <figure class="rollout-clip">
+          <h3>Generated video prediction · 30K checkpoint</h3>
+          <video controls muted playsinline preload="metadata" poster="assets/video/rollouts/cosmos30k_forecast.png" aria-labelledby="cosmos30k_forecast-cap">
+            <source src="assets/video/rollouts/cosmos30k_forecast.mp4" type="video/mp4">
+            <a href="assets/video/rollouts/cosmos30k_forecast.mp4">Download the 30K generated video prediction (MP4)</a>.
+          </video>
+          <figcaption id="cosmos30k_forecast-cap">Generated from the same observed history.</figcaption>
+        </figure>
+        <figure class="rollout-clip">
+          <h3>Policy rollout · 21K checkpoint</h3>
+          <video controls muted playsinline preload="metadata" poster="assets/video/rollouts/cosmos21k_execution.png" aria-labelledby="cosmos21k_execution-cap">
+            <source src="assets/video/rollouts/cosmos21k_execution.mp4" type="video/mp4">
+            <a href="assets/video/rollouts/cosmos21k_execution.mp4">Download the 21K policy rollout (MP4)</a>.
+          </video>
+          <figcaption id="cosmos21k_execution-cap"><strong class="outcome-success">Success</strong> in this episode.</figcaption>
+        </figure>
+        <figure class="rollout-clip">
+          <h3>Policy rollout · 30K checkpoint</h3>
+          <video controls muted playsinline preload="metadata" poster="assets/video/rollouts/cosmos30k_execution.png" aria-labelledby="cosmos30k_execution-cap">
+            <source src="assets/video/rollouts/cosmos30k_execution.mp4" type="video/mp4">
+            <a href="assets/video/rollouts/cosmos30k_execution.mp4">Download the 30K policy rollout (MP4)</a>.
+          </video>
+          <figcaption id="cosmos30k_execution-cap"><strong class="outcome-failure">Failure</strong> in this episode.</figcaption>
+        </figure>
+      </div>
+      <p class="narrow caveat">These clips show one illustrative episode from the presentation, not aggregate success rates.
+        Each policy uses an action decoder trained for its video checkpoint. Generated predictions and executed rollouts
+        are separate comparisons; their frames are not aligned in time. See the checkpoint sweeps below for aggregate results.</p>
     </div>
   </section>
 
@@ -218,5 +271,6 @@
 
 <script src="assets/data.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/rollouts.js"></script>
 </body>
 </html>

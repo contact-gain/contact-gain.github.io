@@ -184,3 +184,17 @@ footer { padding: 36px 0 60px; color: var(--ink-3); font-size: 14px; text-align:
   figure.wide img { width: 820px; max-width: none; }
   .hint { display: block; margin-top: 4px; }
 }
+
+/* Paired forecast and policy clips from the presentation. */
+.rollout-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:24px 0 16px; }
+.rollout-actions button { cursor:pointer; font-family:inherit; }
+.rollout-pause { background:transparent; color:var(--ink); }
+.rollout-pause:hover { color:#fff; }
+.rollout-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+.rollout-clip { margin:0; min-width:0; }
+.rollout-clip h3 { margin:0 0 10px; font-size:18px; }
+.rollout-clip video { display:block; width:100%; aspect-ratio:16/9; object-fit:contain; background:#10191f; border-radius:var(--radius); }
+.rollout-clip figcaption { margin:8px 0 0; }
+.outcome-success { color:#006b57; }
+.outcome-failure { color:#963d2a; }
+@media(max-width:600px) { .rollout-grid { grid-template-columns:1fr; } .rollout-actions .small { flex-basis:100%; } }
