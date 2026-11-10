@@ -127,18 +127,17 @@
   <section id="abstract">
     <div class="wrap"><div class="narrow">
       <h2>Abstract</h2>
-      <p>Recent Video-Action Models (VAMs) build robot policies on top of pretrained generative video backbones, using their internal
-        representations as predictive features for action decoding. However, selecting which video model checkpoint to use remains expensive:
-        each candidate typically requires training a separate Inverse Dynamics Model (IDM) and evaluating the resulting policy, while visual
-        fidelity alone provides little indication of downstream control quality. We contend that the usefulness of a video model for control
-        is determined not by how realistic its predictions appear, but by what interaction-relevant information its internal representations
-        make accessible to the action decoder. We therefore introduce Contact Gain, an offline metric that measures how much a video model’s
-        internal activations improve prediction of future robot–object contact beyond what can already be inferred from the observed history.
-        Across dense checkpoint sweeps of two generative video models on two simulated manipulation benchmarks, MolmoSpaces and RoboCasa, we
-        demonstrate that Contact Gain consistently tracks downstream robot success and selects a highest-performing checkpoint in each sweep,
-        while conventional video-quality metrics fail to reliably identify the best checkpoints. We further show that this interaction
-        information is not merely decodable: perturbing contact-associated activations produces substantially larger changes in predicted
-        actions than matched random perturbations.</p>
+      <p>Recent video-action models build robot policies on pretrained generative video backbones, using their internal
+        representations as predictive features for action decoding. Yet visually plausible predictions provide limited
+        evidence about which representations will support effective control. We investigate whether interaction-relevant
+        information accessible in video activations helps explain downstream policy quality. We introduce Contact Gain,
+        an offline metric that uses simulator contact labels to measure how much video activations improve future-
+        contact prediction beyond an observed-input probe, enabling checkpoint selection before training a separate
+        action decoder for every candidate. Across checkpoint sweeps of two video-model families, Contact Gain tracks
+        downstream policy success and identifies a checkpoint with the highest observed success in each family, while
+        Fréchet Video Distance shows weak association. Perturbing contact-associated activations also produces
+        substantially larger changes in predicted actions than matched random perturbations, connecting the information
+        accessible in video representations to action prediction.</p>
     </div></div>
   </section>
 
