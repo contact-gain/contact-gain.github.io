@@ -40,17 +40,23 @@ header.hero { padding: 72px 0 24px; text-align: center; }
 h1 { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.15; font-weight: 700; margin: 0 auto 8px; max-width: 900px; letter-spacing: -.01em; }
 h1 .sub { display: block; font-weight: 500; color: var(--ink-2); font-size: .72em; margin-top: 10px; }
 .authors { margin: 22px 0 4px; font-size: 18px; }
-.contact { margin: 18px 0 0; }
-.contact a {
-  display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 12px;
-  max-width: 100%; padding: 12px 20px; border: 1px solid var(--ink-2); border-radius: var(--radius);
-  background: var(--surface-2); text-decoration: none;
+.contact { margin: 20px auto 0; }
+.contact-label { margin: 0 0 9px; color: var(--ink-2); font-size: 13px; font-weight: 500; }
+.contact-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
+.contact-link {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 8px 15px; border: 1px solid var(--hairline); border-radius: 999px;
+  background: #fff; color: var(--ink-2); font-size: 14px; font-weight: 600; line-height: 1.4;
+  text-decoration: none;
 }
-.contact a:hover { background: var(--hairline); }
-.contact span { color: var(--ink-2); font-size: 15px; }
-.contact strong { font-size: 18px; text-decoration: underline; text-underline-offset: 3px; }
-.contact-socials { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 24px; margin: 10px 0 0; font-size: 15px; font-weight: 600; }
-.contact-socials a { display: inline-flex; align-items: center; min-height: 44px; }
+.contact-link svg { width: 16px; height: 16px; flex: none; }
+.contact-link:hover { background: var(--surface-2); border-color: var(--ink-3); color: var(--ink); }
+.contact-email { background: #edf6f3; border-color: #c4ded5; color: #185b4e; }
+.contact-email:hover { background: #dfefe9; border-color: #8dbbae; color: #154c42; }
+@media (max-width: 480px) {
+  .contact-actions { display: grid; grid-template-columns: auto auto; }
+  .contact-email { grid-column: 1 / -1; justify-self: center; }
+}
 .affil { color: var(--ink-3); font-size: 15px; margin: 0; }
 .links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 28px 0 8px; }
 .btn {
