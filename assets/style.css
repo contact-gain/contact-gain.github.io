@@ -49,6 +49,8 @@ h1 .sub { display: block; font-weight: 500; color: var(--ink-2); font-size: .72e
 .contact a:hover { background: var(--hairline); }
 .contact span { color: var(--ink-2); font-size: 15px; }
 .contact strong { font-size: 18px; text-decoration: underline; text-underline-offset: 3px; }
+.contact-socials { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 24px; margin: 10px 0 0; font-size: 15px; font-weight: 600; }
+.contact-socials a { display: inline-flex; align-items: center; min-height: 44px; }
 .affil { color: var(--ink-3); font-size: 15px; margin: 0; }
 .links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 28px 0 8px; }
 .btn {
